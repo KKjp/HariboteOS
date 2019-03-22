@@ -35,13 +35,13 @@ entry:
     movw msg, %si
 
 putloop:
-    movw (%si), %al
-    movw $1, %si
+    movb (%esi), %al
+    addw $1, %si
     cmp $0, %al
     je fin
     movb $0x0e, %ah
     movw $15, %bx
-    int $0x80
+    int $0x10
     jmp putloop
 
 fin:
@@ -55,5 +55,7 @@ msg:
     .byte $0x00
 
 current:
-    .fill $1, $510 - current, $0
+    # .set repeat, $510 - current
+    # .fill repeat, $1, $0
+    .space $510 - current
     .byte $0x55, $0xaa
