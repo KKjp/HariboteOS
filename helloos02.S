@@ -1,6 +1,7 @@
+.code16
 .text
-.globl os_start
-os_start:
+.globl _start
+_start:
     jmp entry
     .byte $0x90
     .ascii "HELLOIPL"
@@ -20,12 +21,7 @@ os_start:
     .long $0xfffffff
     .ascii "HELLO-OS   "
     .ascii "FAT12   "
-    .long $0
-    .long $0
-    .long $0
-    .long $0
-    .word $0
-
+    .space 18, 0
 entry:
     movw $0, %ax
     movw %ax, %ss
@@ -54,8 +50,6 @@ msg:
     .byte $0x0a
     .byte $0x00
 
-current:
-    # .set repeat, $510 - current
-    # .fill repeat, $1, $0
-    .space $510 - current
+    .space _start + 510 - ., 0
     .byte $0x55, $0xaa
+
