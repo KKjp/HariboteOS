@@ -16,7 +16,7 @@ run: $(IMG)
 
 debug: $(IMG)
 	hexdump -C $^
-	objdump -D -b binary -m i8086 $^
+	objdump -D -b binary -m i8086 --start-address=0x50 $^
 
 # helloos02.o: helloos02.S
 # 	as -mtune=i386 -o $@ $^

@@ -8,5 +8,5 @@ all: mbr
 
 mbr: $(SRC_MBR) $(OUTPUT)
 	$(AS) $(ASFLAGS) -o $(OBJFILE) $(SRC_MBR)
-	$(OBJCOPY) $(OCFLAGS) $(OUTPUT) $(OBJFILE)
+	$(OBJCOPY) $(OCFLAGS) $(OBJFILE) $(OUTPUT) 
 
