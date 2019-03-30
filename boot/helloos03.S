@@ -30,7 +30,7 @@ entry:
     movw    %ax, %ds
     movw    %ax, %es
     movw    %ax, %di
-    movw    $0x7c76, %si # movw msg, %si
+    movw    $msg/*$0x7c76*/, %si # movw msg, %si
 
 putloop:
     movb    (%si), %al
@@ -79,7 +79,7 @@ retry:
     jmp     retry
 
 error:
-    movw    $0x7cb7, %si
+    movw    $errormsg/*$0x7cb7*/, %si
     jmp     print
 
 errormsg:
@@ -90,7 +90,7 @@ errormsg:
     .byte   0x00
 
 succeed:
-    movw    $0x7cd1, %si
+    movw    $succeedmsg/*$0x7cd1*/, %si
     jmp     print
 
 succeedmsg:

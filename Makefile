@@ -12,7 +12,7 @@ $(MBR):
 	$(MAKE) -C boot
 
 run: $(IMG)
-	$(QEMU) $(QFLAGS) file=$(IMG),format=raw,if=floppy -boot a
+	$(QEMU) $(QFLAGS) $(IMG)
 
 debug: $(IMG)
 	hexdump -C $^
