@@ -1,22 +1,49 @@
 include Makefile.inc
 
-all: img
-
+default: img    # makeを引数なしで実行した場合に実行される
+                # 引数なしの場合、img:を実行する
 img:
 	$(MAKE) $(IMG)
 
-$(IMG): $(MBR)
-	mformat -f 1440 -C -B $(MBR) -i $@
+$(IMG): $(MBR) $(KERNEL)    # $(IMG)を作るためには$(MBR)と$(KERNEL)が必要
+	mformat -f 1440 -C -B $(MBR) -i $@ ::
+	mcopy -i $(IMG) $(KERNEL) ::
+
+# mformat - floppy-diskイメージを作るコマンド
+#   -f 1440 - 1440KBディスクを指定
+#   -C - MS-DOSファイルシステムを作成する
+#        これでディスクイメージの0x200と0x1400のf0ffffff0fを書いている
+#   -B $(MBR) - $(MBR)=build/HariboteOS,mbrをブートセクタに指定する
+#   -i $@ - $@は作りたいファイル名(:の前の$(IMG))を表すマクロ
+#           -iは出力ファイルの指定
+#   :: - 改行する場合後ろに::をつける
+# mcopy - floppy-diskイメージにファイルを追加するコマンド
+#   -i - ディスクイメージの指定
 
 $(MBR):
-	$(MAKE) -C boot
+	$(MAKE) -C boot     # -C boot - ./boot/に移動し、そこにあるMakefileを実行する
+
+$(KERNEL):
+	$(MAKE) -C kernel
 
 run: $(IMG)
-	$(QEMU) $(QFLAGS) $(IMG)
+	$(QEMU) $(QFLAGS) -drive file=$(IMG),format=raw,if=floppy
+
+# 展開すると
+# qemu-system-i386 -m 32 -localtime -vga std -boot a -drive file=build/HariboteOS.img,format=raw,if=floppy
+#   -m 32 - 32MiBのメモリを使うという意味
+#   -localtime - ゲストOSの時間にホストOSの時間を利用する
+#   -vga std - VGAグラフィックスモード(スタンダード, 1280*1024:16bit-color)
+#   -boot a - floppy-diskを最初にブートする
+#   -drive ... - "-fda"オプションで単純にフロッピーイメージを指定しただけだと起動しなかったので
+#                より詳細に設定できるこのオプションを使った。
 
 debug: $(IMG)
 	hexdump -C $^
 	objdump -D -b binary -m i8086 --start-address=0x50 $^
+
+clean:
+	rm -f $(OUT_DIR)/*
 
 # helloos02.o: helloos02.S
 # 	as -mtune=i386 -o $@ $^

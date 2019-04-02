@@ -1,14 +1,19 @@
 include ../Makefile.inc
 
-SRC_MBR := helloos03.S
+SRC_MBR := ipl10.S
 OUTPUT := ../$(MBR)
-OBJFILE := ../$(OUT_DIR)/helloos03.o
-BINFILE := ../$(OUT_DIR)/helloos03.bin
+OBJFILE := ../$(OUT_DIR)/ipl10.o
+BINFILE := ../$(OUT_DIR)/ipl10.bin
 
-all: mbr
+default: mbr
 
 mbr: $(SRC_MBR) $(OUTPUT)
 	$(AS) $(ASFLAGS) -o $(OBJFILE) $(SRC_MBR)
-	$(LD) $(LDFLAGS) -o $(BINFILE) $(OBJFILE)
+	$(LD) $(LDFLAGS) -Ttext=0x7c00 -o $(BINFILE) $(OBJFILE)
 	$(OBJCOPY) $(OCFLAGS) $(BINFILE) $(OUTPUT) 
+
+# -Ttext=0x7c00 - .textセクションが0x7c00に読み込まれるとしてアセンブラのアドレスを計算する
+
+$(OUTPUT):
+	touch $(OUTPUT)
 
