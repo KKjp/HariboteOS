@@ -1,6 +1,6 @@
 include ../Makefile.inc
 
-SRC_MBR := ipl10.S
+SRCFILE := ipl10.S
 OUTPUT := ../$(MBR)
 OBJFILE := ../$(OUT_DIR)/ipl10.o
 BINFILE := ../$(OUT_DIR)/ipl10.bin
@@ -8,7 +8,7 @@ BINFILE := ../$(OUT_DIR)/ipl10.bin
 default: mbr
 
 mbr: $(SRC_MBR) $(OUTPUT)
-	$(AS) $(ASFLAGS) -o $(OBJFILE) $(SRC_MBR)
+	$(AS) $(ASFLAGS) -o $(OBJFILE) $(SRCFILE)
 	$(LD) $(LDFLAGS) -Ttext=0x7c00 -o $(BINFILE) $(OBJFILE)
 	$(OBJCOPY) $(OCFLAGS) $(BINFILE) $(OUTPUT) 
 

@@ -1,0 +1,5 @@
+#!/bin/sh
+sudo vim -c ":set filetype=make" -c ":tabnew ./Makefile" -c ":tabnew ./boot/Makefile"\
+     -c ":tabnew ./kernel/Makefile" -c ":tabnew ./boot/asmhead.S" -c ":tabnew ./boot/ipl10.S"\
+    -c ":tabnew ./kernel/bootpack.c" -c ":tabnew ./kernel/_bootpack.S" ./Makefile.inc
+
