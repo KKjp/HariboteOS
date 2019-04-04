@@ -8,14 +8,14 @@ OBJCOPY := objcopy
 OUT_DIR := build
 INC_DIR := include
 BINFILE := $(OUT_DIR)/HariboteOS.bin
-MBR := $(OUT_DIR)/HariboteOS.mbr
-KERNEL := $(OUT_DIR)/HariboteOS.ken
+MBR := $(OUT_DIR)/ipl10.bin
+KERNEL := $(OUT_DIR)/HariboteOS.bin
 IMG := $(OUT_DIR)/HariboteOS.img
        
-CFLAG := -m 32 -Wall -nostdlib -fno-pic -fno-pie -nostartfiles -g -std=gnu99 -ffreestanding -O0 -I $(INC_DIR)
-CXXFLAGS := -m 32 -Wall -nostdlib -fno-pic -fno-pie -nostartfiles -g -std=c++11 -ffreestanding -O0 -I $(INC_DIR) 
-ASFLAGS := -nostdlib -mtune=i386
-LDFLAGS := -g -T/dev/null
+CFLAGS := -march=i386 -m32 -Wall -nostdlib -fno-pic -fno-pie -nostartfiles -g -std=gnu99 -ffreestanding -O0 -I $(INC_DIR)
+CXXFLAGS := -m32 -Wall -nostdlib -fno-pic -fno-pie -nostartfiles -g -std=c++11 -ffreestanding -O0 -I $(INC_DIR) 
+ASFLAGS := -nostdlib --32 -mtune=i386
+LDFLAGS := -g -m elf_i386
 QFLAGS := -m 32 -localtime -vga std -boot a
 OCFLAGS := -O binary 
 

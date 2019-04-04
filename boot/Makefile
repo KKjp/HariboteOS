@@ -1,19 +1,28 @@
 include ../Makefile.inc
 
-SRCFILE := ipl10.S
-OUTPUT := ../$(MBR)
-OBJFILE := ../$(OUT_DIR)/ipl10.o
-BINFILE := ../$(OUT_DIR)/ipl10.bin
+SRC_MBR := ipl10.S
+OBJ_MBR := ../$(OUT_DIR)/ipl10.o
+OBJ2_MBR := ../$(OUT_DIR)/ipl10.o2
+BIN_MBR := ../$(MBR)
 
-default: mbr
+SRC_ASMHEAD := asmhead.S
+OBJ_ASMHEAD := ../$(OUT_DIR)/asmhead.o
+OBJ2_ASMHEAD := ../$(OUT_DIR)/asmhead.o2
+BIN_ASMHEAD := ../$(OUT_DIR)/asmhead.bin
 
-mbr: $(SRC_MBR) $(OUTPUT)
-	$(AS) $(ASFLAGS) -o $(OBJFILE) $(SRCFILE)
-	$(LD) $(LDFLAGS) -Ttext=0x7c00 -o $(BINFILE) $(OBJFILE)
-	$(OBJCOPY) $(OCFLAGS) $(BINFILE) $(OUTPUT) 
+default: mbr asmhead
+
+mbr: $(OBJ_MBR)
+	$(LD) $(LDFLAGS) -T/dev/null --oformat binary -Ttext=0x7c00 -o $(BIN_MBR) $(OBJ_MBR)
+
+$(OBJ_MBR):
+	$(AS) $(ASFLAGS) -o $(OBJ_MBR) $(SRC_MBR)
 
 # -Ttext=0x7c00 - .textセクションが0x7c00に読み込まれるとしてアセンブラのアドレスを計算する
 
-$(OUTPUT):
-	touch $(OUTPUT)
+asmhead: $(OBJ_ASMHEAD)
+	$(LD) $(LDFLAGS) -T/dev/null --oformat binary -Ttext=0xc200 -o $(BIN_ASMHEAD) $(OBJ_ASMHEAD)
+
+$(OBJ_ASMHEAD):
+	$(AS) $(ASFLAGS) -o $(OBJ_ASMHEAD) $(SRC_ASMHEAD)
 

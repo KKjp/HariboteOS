@@ -2,7 +2,7 @@
 .equ        CYLS, 10
 .text
 
-_start:
+osstart:
     jmp     entry
     .byte   0x90
     .ascii  "HELLOIPL"
@@ -90,7 +90,7 @@ print:
     movb    (%si), %al
     addw    $1, %si
     cmp     $0, %al
-    je      0xc200           # jump to ../kernel/haribote.S:harimain()
+    je      0xc200           # jump to ./asmhead.S
     movb    $0x0e, %ah
     movw    $15, %bx
     int     $0x10
@@ -126,7 +126,7 @@ succeedmsg:
     .byte   0x00
 
 empty:
-    .space  _start + 510 - ., 0
+    .space  osstart + 510 - ., 0
 
     .byte   0x55, 0xaa # boot signeture
 
