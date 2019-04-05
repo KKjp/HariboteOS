@@ -45,19 +45,19 @@ putloop:
 
 /* The codes below is the difference between itself and helloos02.S; read FAT12 disk */
 readdisk:
-    movw    $0x0820, %ax
-    movw    %ax, %es
+    movw    $0x0820, %ax     # the instruction "movw $0x0820, %es" is not exist
+    movw    %ax, %es         # read disk to 0x8200
     movw    $0x0, %bx        # buffer address is indicated by [ES:BX]
     movb    $0x0, %ch        # cylinder number is 0
     movb    $0x0, %dh        # head number is 0
-    movb    $0x2, %cl        # sector number is 0
+    movb    $0x2, %cl        # sector number is 2
 
 readloop:
     movw    $0x0, %si        # failure counter
 
 retry:
     movb    $0x02, %ah       # disk read mode
-    movb    $0x1, %al        # read one sector
+    movb    $0x1, %al        # read a sector
     movb    $0x00, %dl       # read A drive
     int     $0x13            # call disk bios
     jnc     next             # if no error occur, go to next
@@ -65,15 +65,15 @@ retry:
     cmp     $0x5, %si 
     jae     error            # if an error occur five times, go to error
     movb    $0x00, %ah       # drive reset
-    movb    $0x00, %dh       # A drive
+    movb    $0x00, %dl       # A drive
     int     $0x13
     jmp     retry
 
 next:
     movw    %es, %ax    
-    addw    $0x0020, %ax     # add 512 address
+    addw    $0x0020, %ax     # add 512 to the address
     movw    %ax, %es
-    addb    $1, %cl          # for (sectors = 2, cylinder = head = 0; sector <= 18; sector++)
+    addb    $1, %cl          # for (sectors = 3, cylinder = head = 0; sector <= 18; sector++)
     cmp     $18, %cl         #     readloop();
     jbe     readloop         # for (cylinder = 1; cylinder < CYLS; cylinder++)
     movb    $1, %cl          #     for (head = 0; head < 2; head++)
