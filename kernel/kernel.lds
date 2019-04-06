@@ -1,11 +1,13 @@
 /* os.ls */
-OUTPUT_FORMAT("binary");
+OUTPUT_FORMAT(binary);
+OUTPUT_ARCH(i386);
+ENTRY(HariMain);
 
 SECTIONS {
-    .head 0x0 : {
-        LONG(64 * 1024)         /* 0 : size(stack+.data+heap) */
-        LONG(0x69726148)        /* 4 : "Hari" */
-        LONG(0)                 /* 8 : mmarea*/
+    .head 0x00280000 : AT (0x0) {
+        LONG(64 * 1024)         /* 0  : size(stack+.data+heap) */
+        LONG(0x69726148)        /* 4  : "Hari" */
+        LONG(0)                 /* 8  : mmarea*/
         LONG(0x310000)          /* 12 : stack初期値 & .data転送先 */
         LONG(SIZEOF(.data))     /* 16 : size of .data */
         LONG(LOADADDR(.data))   /* 20 : size of .data */
@@ -14,9 +16,9 @@ SECTIONS {
         LONG(0x01)              /* 32 : heap領域開始アドレス */
     }
 
-    .text    : {*(.text)}
+    .text (. + 0x00280000) : AT ( SIZEOF(.head) ) {*(.text)}
 
-    .data 0x310000 : AT ( ADDR(.text) + SIZEOF(.text) ) {
+    .data 0x310000 : AT ( LOADADDR(.text) + SIZEOF(.text) ) {
         *(.data)
         *(.rodata*)
         *(.bss)

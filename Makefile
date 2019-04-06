@@ -6,8 +6,8 @@ img:
 	$(MAKE) $(IMG)
 
 $(IMG): $(MBR) $(KERNEL)    # $(IMG)を作るためには$(MBR)と$(KERNEL)が必要
-	mformat -f 1440 -C -B $(MBR) -i $@ ::
-	mcopy -i $(IMG) $(KERNEL) ::
+	mformat -f 1440 -C -B $(MBR) -i $@
+	mcopy -i $(IMG) $(KERNEL)
 
 # mformat - floppy-diskイメージを作るコマンド
 #   -f 1440 - 1440KBディスクを指定
@@ -16,7 +16,6 @@ $(IMG): $(MBR) $(KERNEL)    # $(IMG)を作るためには$(MBR)と$(KERNEL)が�
 #   -B $(MBR) - $(MBR)=build/HariboteOS,mbrをブートセクタに指定する
 #   -i $@ - $@は作りたいファイル名(:の前の$(IMG))を表すマクロ
 #           -iは出力ファイルの指定
-# :: - 改行する場合後ろに::をつける
 # mcopy - floppy-diskイメージにファイルを追加するコマンド
 #   -i - ディスクイメージの指定
 
@@ -41,6 +40,10 @@ run: $(IMG)
 debug: $(IMG)
 	hexdump -C $^
 	objdump -D -b binary -m i8086 --start-address=0x50 $^
+
+debugq: $(IMG)
+	qemu-system-i386 -m 32 -localtime -vga std -boot a -drive file=$(IMG),format=raw,if=floppy -gdb tcp::10000 -S &
+	gdb --eval-command="target remote localhost:10000"
 
 clean:
 	rm -f $(OUT_DIR)/*

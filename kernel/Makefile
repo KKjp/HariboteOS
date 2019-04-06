@@ -18,13 +18,13 @@ kernel: $(HRB_BOTPAK) ../$(OUT_DIR)/asmhead.bin
 	cat ../$(OUT_DIR)/asmhead.bin $(HRB_BOTPAK) > $(BIN_KEN)
 
 $(HRB_BOTPAK): $(OBJ_BOTPAKS) $(OBJ_BOTPAKC)
-	$(LD) $(LDFLAGS) -e HariMain -T./kernel.ls -Ttext=0xc200 -o $(HRB_BOTPAK) $(OBJ_BOTPAKS) $(OBJ_BOTPAKC)
+	$(LD) $(LDFLAGS) -T./kernel.lds -o $@ $(OBJ_BOTPAKS) $(OBJ_BOTPAKC)
 
 $(OBJ_BOTPAKS):
-	$(AS) $(ASFLAGS) -o $(OBJ_BOTPAKS) $(SRC_BOTPAKS)
+	$(AS) $(ASFLAGS) -o $@ $(SRC_BOTPAKS)
 
 $(OBJ_BOTPAKC):
-	$(CC) $(CFLAGS) -c -o $(OBJ_BOTPAKC) $(SRC_BOTPAKC)
+	$(CC) $(CFLAGS) -c -o $@ $(SRC_BOTPAKC)
 
 ../$(OUT_DIR)/asmhead.bin:
 	$(MAKE) asmhead -C ../boot

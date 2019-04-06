@@ -19,7 +19,7 @@ _asmhead:
     movb    $0x13, %al          # VGA graphics, 320*200:8bit-color
     movb    $0x00, %ah
     int     $0x10
-    movb    $8, (VMODE)        # write graphics mode(referd by C)
+    movb    $8, (VMODE)         # write graphics mode(referd by C)
     movw    $320, (SCRNX)
     movw    $200, (SCRNY)
     movl    $0x000a0000, (VRAM)
@@ -50,9 +50,9 @@ _asmhead:
 
 # switch to protected mode
 .code32
-    lgdt    (GDTR0)            # set GDTR(a register)
+    lgdt    (GDTR0)             # set GDTR(a register)
     movl    %cr0, %eax
-    andl     $0x7fffffff, %eax   # set 0 to bit31 for disenable paging
+    andl    $0x7fffffff, %eax   # set 0 to bit31 for disenable paging
     or      $0x00000001, %eax   # set 1 to bit0 for switch protected mode
     movl    %eax, %cr0
     jmp     $0x10, $pipelineflush
@@ -103,7 +103,7 @@ pipelineflush:
 
 skip:
     movl    12(%ebx), %esp      # set stack-pointer to the initalizative address
-    jmp     $0x10, $0x0000001b
+    jmp     $0x10, $0x0000001b  # jump to ../kernel/bootpack.c
 
 waitkbdout:
     in      $0x64, %al
