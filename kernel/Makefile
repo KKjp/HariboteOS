@@ -18,7 +18,7 @@ kernel: $(HRB_BOTPAK) ../$(OUT_DIR)/asmhead.bin
 	cat ../$(OUT_DIR)/asmhead.bin $(HRB_BOTPAK) > $(BIN_KEN)
 
 $(HRB_BOTPAK): $(OBJ_BOTPAKS) $(OBJ_BOTPAKC)
-	$(LD) $(LDFLAGS) -T./kernel.lds -o $@ $(OBJ_BOTPAKS) $(OBJ_BOTPAKC)
+	$(LD) $(LDFLAGS) -T./kernel.lds -o $@ $(OBJ_BOTPAKC) $(OBJ_BOTPAKS)
 
 $(OBJ_BOTPAKS):
 	$(AS) $(ASFLAGS) -o $@ $(SRC_BOTPAKS)

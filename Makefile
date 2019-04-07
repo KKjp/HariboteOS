@@ -6,8 +6,8 @@ img:
 	$(MAKE) $(IMG)
 
 $(IMG): $(MBR) $(KERNEL)    # $(IMG)を作るためには$(MBR)と$(KERNEL)が必要
-	mformat -f 1440 -C -B $(MBR) -i $@
-	mcopy -i $(IMG) $(KERNEL)
+	mformat -f 1440 -C -B $(MBR) -i $@ ::
+	mcopy -i $@ $(KERNEL) ::
 
 # mformat - floppy-diskイメージを作るコマンド
 #   -f 1440 - 1440KBディスクを指定

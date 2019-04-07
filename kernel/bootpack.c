@@ -8,9 +8,9 @@ extern void io_hlt(void);
 
 void HariMain(void)
 {
-    uint32_t *i;
+    static uint8_t *i;
 
-    for (i = 0xa0000; i <= 0xaffff; i++)
+    for (i = (uint8_t *)0xa0000; i <= (uint8_t *)0xaffff; i++)
         *i = 15;
 
     for (;;)

@@ -19,15 +19,15 @@ _asmhead:
     movb    $0x13, %al          # VGA graphics, 320*200:8bit-color
     movb    $0x00, %ah
     int     $0x10
-    movb    $8, (VMODE)         # write graphics mode(referd by C)
-    movw    $320, (SCRNX)
-    movw    $200, (SCRNY)
-    movl    $0x000a0000, (VRAM)
+    movb    $8, VMODE           # write graphics mode(referd by C)
+    movw    $320, SCRNX
+    movw    $200, SCRNY
+    movl    $0x000a0000, VRAM
 
 # get keyboard's status by BIOS
     movb    $0x02, %ah
     int     $0x16               # call keyboard BIOS
-    movb    %al, (LEDS)
+    movb    %al, LEDS
 
 # According to the specification of PC/AT machines,
 # if execute CLI without executing the code below(prevent PIC from accpting any interrupts)
@@ -49,14 +49,14 @@ _asmhead:
     call    waitkbdout
 
 # switch to protected mode
-.code32
-    lgdt    (GDTR0)             # set GDTR(a register)
+    lgdt    GDTR0               # set GDTR(a register)
     movl    %cr0, %eax
     andl    $0x7fffffff, %eax   # set 0 to bit31 for disenable paging
     or      $0x00000001, %eax   # set 1 to bit0 for switch protected mode
     movl    %eax, %cr0
     jmp     $0x10, $pipelineflush
 
+.code32
 pipelineflush:
     movw    $0x0008, %ax        # read-write segment
     movw    %ax, %ds
@@ -82,7 +82,7 @@ pipelineflush:
     movl    $DSKCAC0+512, %esi  # transfer source
     movl    $DSKCAC+512, %edi   # transfer destination
     movl    $0, %ecx
-    movb    (CYLS), %cl
+    movb    CYLS, %cl
     imul    $512*18*2/4, %ecx   # calcurate the number of memory address that be allocated
     subl    $512/4, %ecx        # subtract address be used to the ipl(mbr)
     call    memcpy
@@ -97,7 +97,7 @@ pipelineflush:
     shr     $2, %ecx            # the instruction which shift right
     jz      skip                # if nothing should be transferred is exist, jump to "skip"
     movl    20(%ebx), %esi      # transfer source
-    addl     %ebx, %esi
+    addl    %ebx, %esi
     movl    12(%ebx), %edi      # transfer destination
     call    memcpy
 
@@ -133,7 +133,7 @@ GDT0:
     .word   0x0000
     
 GDTR0:
-    .word   3*8
+    .word   8*3-1
     .long   GDT0
 
     .align  16
