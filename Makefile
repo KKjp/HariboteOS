@@ -15,9 +15,11 @@ $(IMG): $(MBR) $(KERNEL)    # $(IMG)を作るためには$(MBR)と$(KERNEL)が�
 #        これでディスクイメージの0x200と0x1400のf0ffffff0fを書いている
 #   -B $(MBR) - $(MBR)=build/HariboteOS,mbrをブートセクタに指定する
 #   -i $@ - $@は作りたいファイル名(:の前の$(IMG))を表すマクロ
-#           -iは出力ファイルの指定
+#           -iは出力イメージファイルの指定
 # mcopy - floppy-diskイメージにファイルを追加するコマンド
 #   -i - ディスクイメージの指定
+#
+# :: - よくわかんないけどないと動かない
 
 $(MBR):
 	$(MAKE) -C boot     # -C boot - ./boot/に移動し、そこにあるMakefileを実行する
