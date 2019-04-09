@@ -54,9 +54,8 @@ _asmhead:
     andl    $0x7fffffff, %eax   # set 0 to bit31 for disenable paging
     or      $0x00000001, %eax   # set 1 to bit0 for switch protected mode
     movl    %eax, %cr0
-    jmp     $0x10, $pipelineflush
+    jmp     pipelineflush
 
-.code32
 pipelineflush:
     movw    $0x0008, %ax        # read-write segment
     movw    %ax, %ds
@@ -103,7 +102,7 @@ pipelineflush:
 
 skip:
     movl    12(%ebx), %esp      # set stack-pointer to the initalizative address
-    jmp     $0x10, $0x0000001b  # jump to ../kernel/bootpack.c
+    ljmpl   $0x10, $0x0000004b  # jump to ../kernel/bootpack.c
 
 waitkbdout:
     in      $0x64, %al
@@ -126,7 +125,7 @@ memcpy:
 # the i386 processor will work at low performance
 
 GDT0:
-    .space  8                   # null selecter
+    .space  8, 0                   # null selecter
     .word   0xffff, 0x0000, 0x9200, 0x00cf  # read-write segment
     .word   0xffff, 0x0000, 0x9a28, 0x0047  # executable segment
 
@@ -134,7 +133,7 @@ GDT0:
     
 GDTR0:
     .word   8*3-1
-    .long   GDT0
+    .long   $GDT0
 
     .align  16
 

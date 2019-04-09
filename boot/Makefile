@@ -1,5 +1,7 @@
 include ../Makefile.inc
 
+CFLAGS += -ffreestanding
+
 SRC_MBR := ipl10.S
 OBJ_MBR := ../$(OUT_DIR)/ipl10.o
 BIN_MBR := ../$(MBR)

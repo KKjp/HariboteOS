@@ -5,7 +5,7 @@
 osstart:
     jmp     entry
     .byte   0x90
-    .ascii  "HELLOIPL"
+    .ascii  "HARIBOTE"
     .word   512
     .byte   1
     .word   1
@@ -20,7 +20,7 @@ osstart:
     .long   2880
     .byte   0, 0, 0x29
     .long   0xfffffff
-    .ascii  "HELLO-OS   "
+    .ascii  "HARIBOTEOS "
     .ascii  "FAT12   "
     .space  18, 0
 
