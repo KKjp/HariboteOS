@@ -1,5 +1,7 @@
 include ../Makefile.inc
 
+CFLAGS += -O2
+
 BIN_KEN := ../$(KERNEL)
 
 SRC_BOTPAKS := _bootpack.S

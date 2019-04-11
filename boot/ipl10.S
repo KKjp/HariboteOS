@@ -30,7 +30,6 @@ entry:
     movw    $0x7c00, %sp
     movw    %ax, %ds
     movw    %ax, %es
-    movw    %ax, %di
     movw    $msg, %si
 
 putloop:
@@ -43,7 +42,7 @@ putloop:
     int     $0x10
     jmp     putloop
 
-/* The codes below is the difference between itself and helloos02.S; read FAT12 disk */
+/* read FAT12 disk */
 readdisk:
     movw    $0x0820, %ax     # the instruction "movw $0x0820, %es" is not exist
     movw    %ax, %es         # read disk to 0x8200
@@ -90,7 +89,7 @@ print:
     movb    (%si), %al
     addw    $1, %si
     cmp     $0, %al
-    je      0xc200           # jump to ./asmhead.S
+    je      return
     movb    $0x0e, %ah
     movw    $15, %bx
     int     $0x10
@@ -98,11 +97,16 @@ print:
 
 error:
     movw    $errormsg, %si
-    jmp     print
+    call    print
 
 succeed:
     movw    $succeedmsg, %si
-    jmp     print
+    call    print
+    movb    %ch, 0x0ff0      # store the length of ipl10.S reading disk
+    jmp     0xc200           # jump to ./asmhead.S
+
+return:
+    ret
 
 msg:
     .byte   0x0a, 0x0a

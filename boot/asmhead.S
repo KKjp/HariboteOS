@@ -76,7 +76,7 @@ pipelineflush:
     movl    $DSKCAC, %edi       # transfer destination
     movl    $512/4, %ecx
     call    memcpy
-
+ 
 # all the rest
     movl    $DSKCAC0+512, %esi  # transfer source
     movl    $DSKCAC+512, %edi   # transfer destination
@@ -96,13 +96,13 @@ pipelineflush:
     shr     $2, %ecx            # the instruction which shift right
     jz      skip                # if nothing should be transferred is exist, jump to "skip"
     movl    20(%ebx), %esi      # transfer source
-    addl    %ebx, %esi
+    addl    %ebx, %esi          #    is 0x00280000 + .data's position in a file
     movl    12(%ebx), %edi      # transfer destination
     call    memcpy
 
 skip:
     movl    12(%ebx), %esp      # set stack-pointer to the initalizative address
-    ljmpl   $0x10, $0x0000004b  # jump to ../kernel/bootpack.c
+    ljmpl   $0x10, $0x0000001b  # jump to ../kernel/bootpack.c
 
 waitkbdout:
     in      $0x64, %al
@@ -125,7 +125,7 @@ memcpy:
 # the i386 processor will work at low performance
 
 GDT0:
-    .space  8, 0                   # null selecter
+    .space  8, 0                # null selecter
     .word   0xffff, 0x0000, 0x9200, 0x00cf  # read-write segment
     .word   0xffff, 0x0000, 0x9a28, 0x0047  # executable segment
 
@@ -133,7 +133,7 @@ GDT0:
     
 GDTR0:
     .word   8*3-1
-    .long   $GDT0
+    .long   GDT0
 
     .align  16
 

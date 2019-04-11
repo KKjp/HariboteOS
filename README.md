@@ -1,5 +1,7 @@
 # HariboteOS
 
+## make
+```
 HariboteOS.img    ipl10.S    asmhead.S    bootpack.c    _bootpack.S
       |              |           |            |              |
       |             as          as           gcc            as
@@ -17,4 +19,5 @@ HariboteOS.img    ipl10.S    asmhead.S    bootpack.c    _bootpack.S
       |<---------------------------------mcopy
       |
      qemu
+```
 

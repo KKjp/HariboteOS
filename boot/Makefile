@@ -1,6 +1,6 @@
 include ../Makefile.inc
 
-CFLAGS += -ffreestanding
+CFLAGS += -ffreestanding -O0
 
 SRC_MBR := ipl10.S
 OBJ_MBR := ../$(OUT_DIR)/ipl10.o
