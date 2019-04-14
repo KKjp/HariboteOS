@@ -1,14 +1,14 @@
 include ../Makefile.inc
 
-CFLAGS += -ffreestanding -O0
+CFLAGS      += -ffreestanding -O0
 
-SRC_MBR := ipl10.S
-OBJ_MBR := ../$(OUT_DIR)/ipl10.o
-BIN_MBR := ../$(MBR)
+SRC_MBR     := ipl10.S
+OBJ_MBR     := ../$(OS_BIN_DIR)/ipl10.o
+BIN_MBR     := ../$(MBR)
 
 SRC_ASMHEAD := asmhead.S
-OBJ_ASMHEAD := ../$(OUT_DIR)/asmhead.o
-BIN_ASMHEAD := ../$(OUT_DIR)/asmhead.bin
+OBJ_ASMHEAD := ../$(OS_BIN_DIR)/asmhead.o
+BIN_ASMHEAD := ../$(OS_BIN_DIR)/asmhead.bin
 
 default: mbr asmhead
 

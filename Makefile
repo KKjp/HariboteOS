@@ -3,6 +3,8 @@ include Makefile.inc
 default: img    # makeを引数なしで実行した場合に実行される
                 # 引数なしの場合、img:を実行する
 img:
+	$(MAKE) -C tools
+	$(MAKE) -C include
 	$(MAKE) $(IMG)
 
 $(IMG): $(MBR) $(KERNEL)    # $(IMG)を作るためには$(MBR)と$(KERNEL)が必要
