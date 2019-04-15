@@ -37,7 +37,7 @@ int main(int argc, char **argv)
                 arg.FontDataName = (uint8_t *) argv[count + 1];
             } else {
                 fprintf(stderr,
-                        "hankaku2c: [error] Unknown option \"-%c\" \n", *(argv[count] + 1));
+                        "hankaku2asm: [error] Unknown option \"-%c\" \n", *(argv[count] + 1));
                 exit(EXIT_FAILURE);
             }
         } else {
@@ -46,28 +46,28 @@ int main(int argc, char **argv)
         }
     }
     
-    /* call hankaku2c() */
+    /* call hankaku2asm() */
     if (arg.SourceNumber < 1) {
         fprintf(stderr,
-                "hankaku2c: [error] No input file\n");
+                "hankaku2asm: [error] No input file\n");
         exit(EXIT_FAILURE);
     } else if (arg.SourceNumber > 1) {
         fprintf(stderr,
-                "hankaku2c: [error] Input file is must be one\n");
+                "hankaku2asm: [error] Input file is must be one\n");
         exit(EXIT_FAILURE);
     } else {        /* arg.SourceNumber == 1 */
         if (arg.OutFileName == (uint8_t *) NULL) {
             if (arg.FontDataName == (uint8_t *) NULL) {
                 /* the default */
-                hankaku2c(arg.SourceFileName, DEFAULT_OUT_FILE, DEFAULT_FONT_DATA);
+                hankaku2asm(arg.SourceFileName, DEFAULT_OUT_FILE, DEFAULT_FONT_DATA);
             } else {
-                hankaku2c(arg.SourceFileName, DEFAULT_OUT_FILE, arg.FontDataName);
+                hankaku2asm(arg.SourceFileName, DEFAULT_OUT_FILE, arg.FontDataName);
             }
         } else {
             if (arg.FontDataName == (uint8_t *) NULL) {
-                hankaku2c(arg.SourceFileName, arg.OutFileName, DEFAULT_FONT_DATA);
+                hankaku2asm(arg.SourceFileName, arg.OutFileName, DEFAULT_FONT_DATA);
             } else {
-                hankaku2c(arg.SourceFileName, arg.OutFileName, arg.FontDataName);
+                hankaku2asm(arg.SourceFileName, arg.OutFileName, arg.FontDataName);
             }
         }
     }
@@ -75,7 +75,7 @@ int main(int argc, char **argv)
     return 0;
 }
 
-int32_t hankaku2c(uint8_t *in, uint8_t *out, uint8_t *FontDataName)
+int32_t hankaku2asm(uint8_t *in, uint8_t *out, uint8_t *FontDataName)
 {
     /* combine file */
     FILE *infile, *outfile;
@@ -86,12 +86,12 @@ int32_t hankaku2c(uint8_t *in, uint8_t *out, uint8_t *FontDataName)
 
     if (!(source_code_no_comments = (uint8_t *) malloc(100000))) {
         fprintf(stderr,
-                "hankaku2c: [error] Mamory arocating error\n");
+                "hankaku2asm: [error] Mamory arocating error\n");
         exit(EXIT_FAILURE);
     }
 
     if (!(infile = fopen(in, "r")) || !(outfile = fopen(out, "w"))) {
-        fprintf(stderr, "hankaku2c: [error] File open error\n");
+        fprintf(stderr, "hankaku2asm: [error] File open error\n");
         exit(EXIT_FAILURE);
     } else {
         general_counter = 0;
@@ -102,7 +102,7 @@ int32_t hankaku2c(uint8_t *in, uint8_t *out, uint8_t *FontDataName)
                     fwrite((c_source = translate(FontDataName)), 1, strlen(c_source), outfile);
                     goto exit;
                 } else {
-                    fprintf(stderr, "hankaku2c: [error] An error occured in fgets()\n");
+                    fprintf(stderr, "hankaku2asm: [error] An error occured in fgets()\n");
                     exit(EXIT_FAILURE);
                 }
             } else {
@@ -124,10 +124,9 @@ exit:
     return 0;
 }
 
-uint8_t *translate(uint8_t *source)
+uint8_t *translate(uint8_t *source, uint8_t *FontDataName)
 {
-    uint8_t *head = "char hankaku[4096] = {\n    ";
-    uint8_t *foot = "\n};";
+    uint8_t *head;
     uint8_t buf[16];
     uint8_t *hex, *c_source, source_emilinated;
     uint8_t horizontal_font_data8;
@@ -139,11 +138,11 @@ uint8_t *translate(uint8_t *source)
             !(source_emilinated = (uint8_t *) malloc(100000))
        ) {
         fprintf(stderr,
-                "hankaku2c: [error] Memory arocating error\n");
+                "hankaku2asm: [error] Memory arocating error\n");
         exit(EXIT_FAILURE);
     }
     
-    /* emilinating \n(<CR>) and space */
+    /* eliminating \n(<CR>) and space */
     for (i = 0, j = 0; i < 100000; i++) {
         if (source[i] != '\n' && source[i] != ' ') {
             source_emilinated[j] = source[i];
@@ -165,7 +164,8 @@ uint8_t *translate(uint8_t *source)
     }
 
     /* combine head[] and foot[] and hex[] */
-    sprintf(c_source, "%s%s%s", head, foot);
+    sprintf(c_source, "%s%s%c%s%s",
+            ".globl ", FontDataName, '\n', FontDataName, ":\n", hex);
 
     return c_source;
 }
