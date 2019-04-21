@@ -29,7 +29,8 @@ $(MBR):
 $(KERNEL):
 	$(MAKE) -C kernel
 
-run: $(IMG)
+run:
+	$(MAKE) img
 	$(QEMU) $(QFLAGS) -drive file=$(IMG),format=raw,if=floppy
 
 # 展開すると
@@ -50,7 +51,7 @@ debugq: $(IMG)
 	gdb --eval-command="target remote localhost:10000"
 
 clean:
-	rm -f $(OUT_DIR)/*
+	find $(OUT_DIR) -type f -print | xargs rm -f
 
 # helloos02.o: helloos02.S
 # 	as -mtune=i386 -o $@ $^

@@ -7,7 +7,7 @@ OBJCOPY    := objcopy
 
 OUT_DIR    := build
 INC_DIR    := include
-OS_BIN_DIR := $(OS_BIN_DIR)/HariboteOS
+OS_BIN_DIR := $(OUT_DIR)/HariboteOS
 TOOL_DIR   := $(OUT_DIR)/tools
 MBR        := $(OS_BIN_DIR)/ipl10.bin
 KERNEL     := $(OS_BIN_DIR)/kernel.bin

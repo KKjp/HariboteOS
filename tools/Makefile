@@ -1,8 +1,8 @@
 include ../Makefile.inc
 
-CFLAGS_TOOLS += -Wall -O2
+CFLAGS_TOOLS += -Wall -O2 -g -std=gnu99
 
-SRC_MAKEFONT := makefile.c
+SRC_MAKEFONT := makefont.c
 OBJ_MAKEFONT := ../$(TOOL_DIR)/makefont
 
 default: tools
