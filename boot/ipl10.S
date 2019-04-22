@@ -132,5 +132,5 @@ succeedmsg:
 empty:
     .space  osstart + 510 - ., 0
 
-    .byte   0x55, 0xaa # boot signeture
+    .byte   0x55, 0xaa       # boot signeture
 
