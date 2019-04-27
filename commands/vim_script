@@ -1,0 +1,12 @@
+:set filetype=make
+:set tags=../.tags;~
+:tabnew ../Makefile
+:tabnew ../Makefile.mk
+:tabnew ../kernel/Makefile
+:tabnew ../kernel/bootpack.c
+:tabnew ../kernel/_bootpack.S
+:tabnew ../tools/Makefile
+:tabnew ../tools/makefont.c
+:tabnew ../include/Makefile
+:tabnew ../include/hankaku.txt
+
