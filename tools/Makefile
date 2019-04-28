@@ -1,4 +1,4 @@
-include ../Makefile.inc
+include ../Makefile.mk
 
 CFLAGS_TOOLS += -Wall -O2 -g -std=gnu99
 

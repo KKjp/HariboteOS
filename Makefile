@@ -1,4 +1,4 @@
-include Makefile.inc
+include Makefile.mk
 
 default: img    # makeを引数なしで実行した場合に実行される
                 # 引数なしの場合、img:を実行する

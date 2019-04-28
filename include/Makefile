@@ -1,4 +1,4 @@
-include ../Makefile.inc
+include ../Makefile.mk
 
 SRC_FONT := hankaku.txt
 ASM_FONT := ../$(OS_BIN_DIR)/hankaku.S

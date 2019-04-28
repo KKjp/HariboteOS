@@ -1,4 +1,4 @@
-include ../Makefile.inc
+include ../Makefile.mk
 
 CFLAGS        += -O2
 
@@ -23,7 +23,7 @@ kernel: $(HRB_BOTPAK) $(KERNEL_LOADER)
 	cat ../$(OS_BIN_DIR)/asmhead.bin $(HRB_BOTPAK) > $(BIN_KEN)
 
 $(HRB_BOTPAK): $(OBJ_BOTPAKS) $(OBJ_BOTPAKC) $(FONT_DATA)
-	$(LD) $(LDFLAGS) -T./kernel.lds -o $@ $(OBJ_BOTPAKC) $(OBJ_BOTPAKS) $(FONT_DATA)
+	$(LD) $(LDFLAGS) -T./kernel.x -o $@ $(OBJ_BOTPAKC) $(OBJ_BOTPAKS) $(FONT_DATA)
 
 $(OBJ_BOTPAKS):
 	$(AS) $(ASFLAGS) -o $@ $(SRC_BOTPAKS)

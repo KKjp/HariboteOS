@@ -11,7 +11,7 @@
 #include <string.h>
 
 #define DEFAULT_OUT_FILE    "font.c"
-#define DEFAULT_FONT_DATA   "hankaku.txt"
+#define DEFAULT_FONT_DATA   "_hankaku"
 
 static int32_t hankaku2asm(uint8_t *, uint8_t *, uint8_t *);
 static uint8_t *translate(uint8_t *, uint8_t *);

@@ -1,5 +1,10 @@
 # gitignore
 /build/
-/backup
-/OSedit
+/commands/
+/.tags
+*.sh
+*.o
+*.bin
+*.vim
+*.img
 
