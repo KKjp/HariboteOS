@@ -1,8 +1,23 @@
-# gitignore
+# .gitignore
+
 /commands/
+
 .tags
 *.sh
 *.o
 *.bin
 *.img
+
+# settings for /build
+/build/*
+!/build/HariboteOS/
+!/build/lib/
+!/build/tools/
+/build/HariboteOS/*
+/build/lib/*
+/build/tools/*
+!/build/lib/lib/
+!/build/lib/obj/
+/build/lib/lib/*
+/build/lib/obj/*
 
