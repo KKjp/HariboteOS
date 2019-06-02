@@ -21,3 +21,5 @@
 /build/lib/lib/*
 /build/lib/obj/*
 
+!.gitkeep
+
