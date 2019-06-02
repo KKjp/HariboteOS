@@ -1,4 +1,4 @@
-/* sprintf()
+/* strncat()
  * the functions belong to ../include/osutils.h
  */
 

@@ -1,4 +1,4 @@
-/* memset()
+/* sprintf()
  * the functions belong to ../include/osutils.h
  */
 

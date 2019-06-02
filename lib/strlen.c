@@ -1,4 +1,4 @@
-/* sprintf()
+/* strlen()
  * the functions belong to ../include/osutils.h
  */
 

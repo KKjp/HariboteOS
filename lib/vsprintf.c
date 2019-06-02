@@ -1,4 +1,4 @@
-/* sprintf()
+/* vsprintf()
  * the functions belong to ../include/osutils.h
  */
 
@@ -135,9 +135,6 @@ read_flags:
             for (size_t i = 0; add[i]; i++) {
                 str[str_len++] = add[i];
             }
-
-            //TODO:
-            //      ピリオドの実装。文字列の幅を指定したり。
 
         } else {
             /* other charctors */
