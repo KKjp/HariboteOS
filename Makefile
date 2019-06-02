@@ -1,10 +1,24 @@
 include Makefile.mk
 
-default: img    # makeを引数なしで実行した場合に実行される
-                # 引数なしの場合、img:を実行する
+.DEFAULT_GOAL := img
+
+# makeを引数なしで実行した場合に実行される
+# 引数なしの場合、img:を実行する
+
+.PHONY: clean run img
+
+# カレントディレクトリにclean, run, imgというファイルがあっても実行する
+#
+###########################################################################
+# FORCE:
+# .PHONY: FORCE
+# とやると、例えばclean: FORCEなどと指定すればcleanはmake実行時に必ず実行される
+
 img:
 	$(MAKE) -C tools
 	$(MAKE) -C include
+	$(MAKE) -C lib
+	$(MAKE) -C data
 	$(MAKE) $(IMG)
 
 $(IMG): $(MBR) $(KERNEL)    # $(IMG)を作るためには$(MBR)と$(KERNEL)が必要
@@ -52,6 +66,23 @@ debugq: $(IMG)
 
 clean:
 	find $(OUT_DIR) -type f -print | xargs rm -f
+
+develop:
+	gcc -march=i386 -m32 -Wall -nostdlib -fno-pic -fno-pie -nostartfiles -g -std=gnu99 -ffreestanding -c -O2 -o ./build/HariboteOS/sprintf.o ./include/sprintf.c
+	gcc -march=i386 -m32 -Wall -nostdlib -fno-pic -fno-pie -nostartfiles -g -std=gnu99 -ffreestanding -c -O2 -o ./build/HariboteOS/memset.o  ./include/memset.c
+	gcc -march=i386 -m32 -Wall -nostdlib -fno-pic -fno-pie -nostartfiles -g -std=gnu99 -ffreestanding -c -O2 -o ./build/HariboteOS/strlen.o  ./include/strlen.c
+	gcc -march=i386 -m32 -Wall -nostdlib -fno-pic -fno-pie -nostartfiles -g -std=gnu99 -ffreestanding -c -O2 -o ./build/HariboteOS/strcat.o  ./include/strcat.c
+	gcc -march=i386 -m32 -Wall -nostdlib -fno-pic -fno-pie -nostartfiles -g -std=gnu99 -ffreestanding -c -O2 -o ./build/HariboteOS/strncat.o ./include/strncat.c
+	ld -g -nostdlib -T./kernel/kernel.x -o\
+        ./build/HariboteOS/bootpack.hrb\
+        ./build/HariboteOS/bootpack.o\
+        ./build/HariboteOS/_bootpack.o\
+        ./build/HariboteOS/sprintf.o\
+        ./build/HariboteOS/memset.o\
+        ./build/HariboteOS/strlen.o\
+        ./build/HariboteOS/strcat.o\
+        ./build/HariboteOS/strncat.o\
+        ./build/HariboteOS/hankaku.o
 
 # helloos02.o: helloos02.S
 # 	as -mtune=i386 -o $@ $^

@@ -13,8 +13,8 @@
 #define DEFAULT_OUT_FILE    "font.c"
 #define DEFAULT_FONT_DATA   "_hankaku"
 
-static int32_t hankaku2asm(uint8_t *, uint8_t *, uint8_t *);
-static uint8_t *translate(uint8_t *, uint8_t *);
+static int32_t hankaku2asm(unsigned char *, unsigned char *, unsigned char *);
+static unsigned char *translate(unsigned char *, unsigned char *);
 
 /* noreturn */
 inline static void print_error_msg_hankaku2asm()
@@ -25,9 +25,9 @@ inline static void print_error_msg_hankaku2asm()
 
 struct ARGUMENTS {
     int32_t SourceNumber;       /* if it is not 1, program will occur an error */
-    uint8_t *SourceFileName;
-    uint8_t *OutFileName;
-    uint8_t *FontDataName;
+    unsigned char *SourceFileName;
+    unsigned char *OutFileName;
+    unsigned char *FontDataName;
 };
 
 /* main function
@@ -35,13 +35,13 @@ struct ARGUMENTS {
  *      argc - the number of arguments.
  *             No.0 is used to store this command name,
  *             so not used.
- *      argv - A argument type of (char **),
+ *      argv - A argument type of (unsigned char **),
  *             the pointer to a pointer table of arguments's strings.
  */
 int main(int argc, char **argv)
 {
     int32_t count;
-    struct  ARGUMENTS arg = { 0, (uint8_t *) NULL, (uint8_t *) NULL, (uint8_t *) NULL };
+    struct  ARGUMENTS arg = { 0, (unsigned char *) NULL, (unsigned char *) NULL, (unsigned char *) NULL };
 
     if (argc > 6) {
         fprintf(stderr, "hankaku2asm: [error] The arguments must be below 6\n");
@@ -52,15 +52,15 @@ int main(int argc, char **argv)
     for (count = 1; count <= 5; count++) {  /* the maximum of number of arguments if 6 */
         if (*argv[count] == '-') {
             if (*(argv[count] + 1) == 'o') {
-                arg.OutFileName  = (uint8_t *) argv[++count];
+                arg.OutFileName  = (unsigned char *) argv[++count];
             } else if (*(argv[count] + 1) == 'n') {
-                arg.FontDataName = (uint8_t *) argv[++count];
+                arg.FontDataName = (unsigned char *) argv[++count];
             } else {
                 fprintf(stderr, "hankaku2asm: [error] Unknown option \"-%c\" \n", *(argv[count] + 1));
                 exit(EXIT_FAILURE);
             }
         } else {
-            arg.SourceFileName = (uint8_t *) argv[count];
+            arg.SourceFileName = (unsigned char *) argv[count];
             arg.SourceNumber++;
         }
     }
@@ -73,20 +73,20 @@ int main(int argc, char **argv)
         fprintf(stderr, "hankaku2asm: [error] Input file is must be one\n");
         exit(EXIT_FAILURE);
     } else {        /* arg.SourceNumber == 1 */
-        if (arg.OutFileName == (uint8_t *) NULL) {
-            if (arg.FontDataName == (uint8_t *) NULL) {
+        if (arg.OutFileName == (unsigned char *) NULL) {
+            if (arg.FontDataName == (unsigned char *) NULL) {
                 /* the default */
-                if (hankaku2asm(arg.SourceFileName, (uint8_t *) DEFAULT_OUT_FILE, (uint8_t *) DEFAULT_FONT_DATA)) {
+                if (hankaku2asm(arg.SourceFileName, (unsigned char *) DEFAULT_OUT_FILE, (unsigned char *) DEFAULT_FONT_DATA)) {
                     print_error_msg_hankaku2asm();
                 }
             } else {
-                if (hankaku2asm(arg.SourceFileName, (uint8_t *) DEFAULT_OUT_FILE, arg.FontDataName)) {
+                if (hankaku2asm(arg.SourceFileName, (unsigned char *) DEFAULT_OUT_FILE, arg.FontDataName)) {
                     print_error_msg_hankaku2asm();
                 }
             }
         } else {
-            if (arg.FontDataName == (uint8_t *) NULL) {
-                if (hankaku2asm(arg.SourceFileName, arg.OutFileName, (uint8_t *) DEFAULT_FONT_DATA)) {
+            if (arg.FontDataName == (unsigned char *) NULL) {
+                if (hankaku2asm(arg.SourceFileName, arg.OutFileName, (unsigned char *) DEFAULT_FONT_DATA)) {
                     print_error_msg_hankaku2asm();
                 }
             } else {
@@ -103,21 +103,21 @@ int main(int argc, char **argv)
 /* The function read and write files and call translate()
  * if no error occur this function return 0.
  */
-static int32_t hankaku2asm(uint8_t *in, uint8_t *out, uint8_t *FontDataName)
+static int32_t hankaku2asm(unsigned char *in, unsigned char *out, unsigned char *FontDataName)
 {
     /* combine file */
     FILE    *infile, *outfile;
-    uint8_t readed_by_infile[1024];
+    unsigned char readed_by_infile[1024];
     int32_t counter;
 
-    uint8_t *source_code_no_comments, *asm_code;
+    unsigned char *source_code_no_comments, *asm_code;
 
-    if (!(source_code_no_comments = (uint8_t *) malloc(100000)) || !(asm_code = (uint8_t *) malloc(100000))) {
+    if (!(source_code_no_comments = (unsigned char *) malloc(100000)) || !(asm_code = (unsigned char *) malloc(100000))) {
         fprintf(stderr, "hankaku2asm: [error] Mamory arocating error\n");
         exit(EXIT_FAILURE);
     }
 
-    if (!(infile = fopen((const char *) in, "r")) || !(outfile = fopen((const char *) out, "w"))) {
+    if (!(infile = fopen((char *) in, "r")) || !(outfile = fopen((char *) out, "w"))) {
         fprintf(stderr, "hankaku2asm: [error] File open error\n");
         exit(EXIT_FAILURE);
     } else {
@@ -156,14 +156,14 @@ exit:
 /* The function that translate font data to assembly
  * return A pointer to assembly code.
  */
-static uint8_t *translate(uint8_t *source, uint8_t *FontDataName)
+static unsigned char *translate(unsigned char *source, unsigned char *FontDataName)
 {
-    uint8_t buf[16];
-    uint8_t *hex, *asm_code, *source_eliminated;
-    uint8_t horizontal_font_data8;
+    unsigned char buf[16];
+    unsigned char *hex, *asm_code, *source_eliminated;
+    unsigned char horizontal_font_data8;
     int32_t i, j, q;
 
-    if (!(hex = (uint8_t *) malloc(100000)) || !(asm_code = (uint8_t *) malloc(100000)) || !(source_eliminated = (uint8_t *) malloc(100000))) {
+    if (!(hex = (unsigned char *) malloc(100000)) || !(asm_code = (unsigned char *) malloc(100000)) || !(source_eliminated = (unsigned char *) malloc(100000))) {
         fprintf(stderr, "hankaku2asm: [error] Memory arocating error\n");
         exit(EXIT_FAILURE);
     }

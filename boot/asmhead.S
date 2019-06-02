@@ -68,14 +68,14 @@ pipelineflush:
     movl    $bootpack, %esi     # transfer source
     movl    $BOTPAK, %edi       # transfer destination
     movl    $512*1024/4, %ecx   # size
-    call    memcpy
+    call    _memcpy
 
 # transfer disk data too
 # at first, boot sector
     movl    $0x7c00, %esi       # transfer source
     movl    $DSKCAC, %edi       # transfer destination
     movl    $512/4, %ecx
-    call    memcpy
+    call    _memcpy
  
 # all the rest
     movl    $DSKCAC0+512, %esi  # transfer source
@@ -84,7 +84,7 @@ pipelineflush:
     movb    CYLS, %cl
     imul    $512*18*2/4, %ecx   # calcurate the number of memory address that be allocated
     subl    $512/4, %ecx        # subtract address be used to the ipl(mbr)
-    call    memcpy
+    call    _memcpy
 
 # the end of the main process of asmhead.S
 # start-up of bootpack.c
@@ -98,7 +98,7 @@ pipelineflush:
     movl    20(%ebx), %esi      # transfer source
     addl    %ebx, %esi          #    is 0x00280000 + .data's position in a file
     movl    12(%ebx), %edi      # transfer destination
-    call    memcpy
+    call    _memcpy
 
 skip:
     movl    12(%ebx), %esp      # set stack-pointer to the initalizative address
@@ -110,13 +110,13 @@ waitkbdout:
     jnz     waitkbdout
     ret
 
-memcpy:
+_memcpy:
     movl    (%esi), %eax
     addl    $4, %esi
     movl    %eax, (%edi)
     addl    $4, %edi
     subl    $1, %ecx
-    jnz     memcpy
+    jnz     _memcpy
     ret
 
     .align  16

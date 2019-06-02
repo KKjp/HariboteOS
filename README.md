@@ -1,5 +1,5 @@
 # HariboteOS
-   
+
 ## environments
 ```
 $ uname -a

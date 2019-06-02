@@ -1,5 +1,8 @@
 include ../Makefile.mk
 
+.DEFAULT_GOAL := kernel
+.PHONY: kernel
+
 CFLAGS        += -O2
 
 BIN_KEN       := ../$(KERNEL)
@@ -17,13 +20,14 @@ HRB_BOTPAK    := ../$(OS_BIN_DIR)/bootpack.hrb
 KERNEL_LOADER := ../$(OS_BIN_DIR)/asmhead.bin
 FONT_DATA     := ../$(OS_BIN_DIR)/hankaku.o
 
-default: kernel
+LIBRARY       := ../$(LIB_DIR)/libosutils.a
+
 
 kernel: $(HRB_BOTPAK) $(KERNEL_LOADER)
 	cat ../$(OS_BIN_DIR)/asmhead.bin $(HRB_BOTPAK) > $(BIN_KEN)
 
-$(HRB_BOTPAK): $(OBJ_BOTPAKS) $(OBJ_BOTPAKC) $(FONT_DATA)
-	$(LD) $(LDFLAGS) -T./kernel.x -o $@ $(OBJ_BOTPAKC) $(OBJ_BOTPAKS) $(FONT_DATA)
+$(HRB_BOTPAK): $(OBJ_BOTPAKS) $(OBJ_BOTPAKC) $(FONT_DATA) $(LIBRARY)
+	$(LD) $(LDFLAGS) -T./kernel.x -o $@ $^
 
 $(OBJ_BOTPAKS):
 	$(AS) $(ASFLAGS) -o $@ $(SRC_BOTPAKS)
@@ -35,5 +39,8 @@ $(KERNEL_LOADER):
 	$(MAKE) asmhead -C ../boot/
 
 $(FONT_DATA):
-	$(MAKE) font -C ../include/
+	$(MAKE) font -C ../data/
+
+$(LIBRARY):
+	$(MAKE) osutils -C ../lib/
 

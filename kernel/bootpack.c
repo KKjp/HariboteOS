@@ -2,27 +2,30 @@
 
 #include <stdint.h>
 
+#include "../include/osutils.h"
+
 /* declared in _bootpack.S */
 extern void     _io_hlt(void);
 extern void     _io_cli(void);
-extern void     _io_out8(uint32_t, uint32_t);
-extern uint32_t _io_load_eflags(void);
-extern void     _io_store_eflags(uint32_t);
+extern void     _io_out8(int32_t, int32_t);
+extern int32_t  _io_load_eflags(void);
+extern void     _io_store_eflags(int32_t);
 
 /* prototype declare */
 static void init_palette(void);
-static void init_screen(uint8_t *, uint32_t, uint32_t);
-static void set_palette(uint32_t, uint32_t, uint8_t *);
-static void putfont8(uint8_t *, uint32_t, uint32_t, uint32_t, uint8_t, uint8_t *);
-static void boxfill8(uint8_t *vram, uint32_t xsize, uint8_t c, uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1);
+static void init_screen(char *, int32_t, int32_t);
+static void set_palette(int32_t, int32_t, unsigned char *);
+static void putfont8(char *, int32_t, int32_t, int32_t, char, char *);
+static void putfonts8_asc(char *, int32_t, int32_t, int32_t, char, char *);
+static void boxfill8(char *vram, int32_t xsize, char c, int32_t x0, int32_t y0, int32_t x1, int32_t y1);
 
 /* All of members of this structure is seted by either 
  * ../boot/ipl10.S or ../boot/asmhead.S
  */
 struct BOOTINFO {
-    uint8_t  cyls, leds, vmode, reserve;
+    char  cyls, leds, vmode, reserve;
     uint16_t scrnx, scrny;
-    uint8_t  *vram;
+    char  *vram;
 } __attribute__((__packed__));
 
 #define COL8_000000     0
@@ -44,7 +47,7 @@ struct BOOTINFO {
 
 static void init_palette(void)
 {
-    static uint8_t table_rgb[] = {
+    static unsigned char table_rgb[] = {
         0x00, 0x00, 0x00,   /*  0:black */
         0xff, 0x00, 0x00,   /*  1:blight red */
         0x00, 0xff, 0x00,   /*  2:blight green */
@@ -89,16 +92,15 @@ static void init_palette(void)
 void HariMain(void)
 {
     struct BOOTINFO *binfo = (struct BOOTINFO *) 0x0ff0;
-    extern uint8_t _hankaku[4096];
+    char s[40];
 
     init_palette();
-    init_screen(binfo->vram, (uint32_t)binfo->scrnx, (uint32_t)binfo->scrny);
-    putfont8(binfo->vram, binfo->scrnx,  8,  8, WHITE, _hankaku + 'A' * 16);
-    putfont8(binfo->vram, binfo->scrnx, 16,  8, WHITE, _hankaku + 'B' * 16);
-    putfont8(binfo->vram, binfo->scrnx, 24,  8, WHITE, _hankaku + 'C' * 16);
-    putfont8(binfo->vram, binfo->scrnx, 40,  8, WHITE, _hankaku + '1' * 16);
-    putfont8(binfo->vram, binfo->scrnx, 48,  8, WHITE, _hankaku + '2' * 16);
-    putfont8(binfo->vram, binfo->scrnx, 56,  8, WHITE, _hankaku + '3' * 16);
+    init_screen(binfo->vram, (int32_t)binfo->scrnx, (int32_t)binfo->scrny);
+    putfonts8_asc(binfo->vram, binfo->scrnx,  8,  8, WHITE, (char *) "ABC 123");
+    putfonts8_asc(binfo->vram, binfo->scrnx, 31, 31, BLACK, (char *) "Haribote OS.");
+    putfonts8_asc(binfo->vram, binfo->scrnx, 30, 30, WHITE, (char *) "Haribote OS.");
+    sprintf(s, "scrnx = %-7.5d!", binfo->scrnx);
+    putfonts8_asc(binfo->vram, binfo->scrnx, 16, 64, WHITE, s);
 
     for (;;)
         _io_hlt();
@@ -115,9 +117,9 @@ void HariMain(void)
  * but the handling likewise is 
  * implemented with using io_out8(): written in assembly.
  */
-static void set_palette(uint32_t start, uint32_t end, uint8_t *rgb)
+static void set_palette(int32_t start, int32_t end, unsigned char *rgb)
 {
-    uint32_t i, eflags;
+    int32_t i, eflags;
 
     eflags = _io_load_eflags();
     _io_cli();
@@ -144,9 +146,9 @@ static void set_palette(uint32_t start, uint32_t end, uint8_t *rgb)
  *      y0    - the address of upper left  of the square
  *      y1    - the address of lower right of the square
  */
-static void boxfill8(uint8_t *vram, uint32_t xsize, uint8_t c, uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1)
+static void boxfill8(char *vram, int32_t xsize, char c, int32_t x0, int32_t y0, int32_t x1, int32_t y1)
 {
-    uint32_t x, y;
+    int32_t x, y;
 
     for (y = y0; y <= y1; y++)
         for (x = x0; x <= x1; x++)
@@ -162,7 +164,7 @@ static void boxfill8(uint8_t *vram, uint32_t xsize, uint8_t c, uint32_t x0, uint
  *      x    - the number of size of width  of screen
  *      y    - the number of size of height of screen
  */
-static void init_screen(uint8_t *vram, uint32_t x, uint32_t y)
+static void init_screen(char *vram, int32_t x, int32_t y)
 {
     /* boxfill8(*, *, *, x of upper left, y of upper left, x of lower right, y of lower right) */
     /* write the base of desktop */
@@ -197,13 +199,13 @@ static void init_screen(uint8_t *vram, uint32_t x, uint32_t y)
  *      c     - the color of the character
  *      font  - the font data of the character(same as vram: horizontal data is continuous)
  */
-static void putfont8(uint8_t *vram, uint32_t xsize, uint32_t x, uint32_t y, uint8_t c, uint8_t *font)
+static void putfont8(char *vram, int32_t xsize, int32_t x, int32_t y, char c, char *font)
 {
-    uint32_t i;
-    uint8_t *p, d;
+    int32_t i;
+    char *p, d;
 
     for (i = 0; i < 16; i++) {
-        p = (uint8_t *) vram + (y + i) * xsize + x;      /* the address of the charactor */
+        p = (char *) vram + (y + i) * xsize + x;      /* the address of the charactor */
         d = font[i];
         if (d & 0b10000000) p[0] = c;
         if (d & 0b01000000) p[1] = c;
@@ -213,6 +215,17 @@ static void putfont8(uint8_t *vram, uint32_t xsize, uint32_t x, uint32_t y, uint
         if (d & 0b00000100) p[5] = c;
         if (d & 0b00000010) p[6] = c;
         if (d & 0b00000001) p[7] = c;
+    }
+
+    return;
+}
+
+static void putfonts8_asc(char *vram, int32_t xsize, int32_t x, int32_t y, char c, char *s)
+{
+    extern char _hankaku[];
+    for (; *s != 0x00; s++) {
+        putfont8(vram, xsize, x, y, c, _hankaku + *s * 16);
+        x += 8;
     }
 
     return;

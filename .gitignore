@@ -1,7 +1,6 @@
 # gitignore
-/build/
 /commands/
-/.tags
+.tags
 *.sh
 *.o
 *.bin

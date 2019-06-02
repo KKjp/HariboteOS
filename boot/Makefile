@@ -1,5 +1,8 @@
 include ../Makefile.mk
 
+.DEFAULT_GOAL := default
+.PHONY: mbr asmhead
+
 CFLAGS      += -ffreestanding -O0
 
 SRC_MBR     := ipl10.S
@@ -18,7 +21,8 @@ mbr: $(OBJ_MBR)
 $(OBJ_MBR):
 	$(AS) $(ASFLAGS) -o $@ $(SRC_MBR)
 
-# -Ttext=0x7c00 - .text$B%;%/%7%g%s$,(B0x7c00$B$KFI$_9~$^$l$k$H$7$F%"%;%s%V%i$N%"%I%l%9$r7W;;$9$k(B
+# -Ttext=0x7c00 - プログラムはこのアドレスにロードされるものとし、アドレス計算も
+#                 この値に基づいて行われる
 
 asmhead: $(OBJ_ASMHEAD)
 	$(LD) $(LDFLAGS) -T./asmhead.x -o $(BIN_ASMHEAD) $^
