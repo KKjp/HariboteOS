@@ -38,4 +38,9 @@ GNU Make 4.1
 ### run
 `% make run`
 
+### clean generated files
+`% make clean`
+
+### debug with qemu
+`% make debugq`
 

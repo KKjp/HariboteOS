@@ -56,33 +56,18 @@ run:
 #   -drive ... - "-fda"オプションで単純にフロッピーイメージを指定しただけだと起動しなかったので
 #                より詳細に設定できるこのオプションを使った。
 
-debug: $(IMG)
+debug:
+	$(MAKE) img
 	hexdump -C $^
 	objdump -D -b binary -m i8086 --start-address=0x50 $^
 
-debugq: $(IMG)
+debugq:
+	$(MAKE) img
 	qemu-system-i386 -m 32 -localtime -vga std -boot a -drive file=$(IMG),format=raw,if=floppy -gdb tcp::10000 -S &
 	gdb --eval-command="target remote localhost:10000"
 
 clean:
-	find $(OUT_DIR) -type f -print | xargs rm -f
-
-develop:
-	gcc -march=i386 -m32 -Wall -nostdlib -fno-pic -fno-pie -nostartfiles -g -std=gnu99 -ffreestanding -c -O2 -o ./build/HariboteOS/sprintf.o ./include/sprintf.c
-	gcc -march=i386 -m32 -Wall -nostdlib -fno-pic -fno-pie -nostartfiles -g -std=gnu99 -ffreestanding -c -O2 -o ./build/HariboteOS/memset.o  ./include/memset.c
-	gcc -march=i386 -m32 -Wall -nostdlib -fno-pic -fno-pie -nostartfiles -g -std=gnu99 -ffreestanding -c -O2 -o ./build/HariboteOS/strlen.o  ./include/strlen.c
-	gcc -march=i386 -m32 -Wall -nostdlib -fno-pic -fno-pie -nostartfiles -g -std=gnu99 -ffreestanding -c -O2 -o ./build/HariboteOS/strcat.o  ./include/strcat.c
-	gcc -march=i386 -m32 -Wall -nostdlib -fno-pic -fno-pie -nostartfiles -g -std=gnu99 -ffreestanding -c -O2 -o ./build/HariboteOS/strncat.o ./include/strncat.c
-	ld -g -nostdlib -T./kernel/kernel.x -o\
-        ./build/HariboteOS/bootpack.hrb\
-        ./build/HariboteOS/bootpack.o\
-        ./build/HariboteOS/_bootpack.o\
-        ./build/HariboteOS/sprintf.o\
-        ./build/HariboteOS/memset.o\
-        ./build/HariboteOS/strlen.o\
-        ./build/HariboteOS/strcat.o\
-        ./build/HariboteOS/strncat.o\
-        ./build/HariboteOS/hankaku.o
+	find $(OUT_DIR) \! -name .gitkeep -type f -print | xargs rm -f
 
 # helloos02.o: helloos02.S
 # 	as -mtune=i386 -o $@ $^
