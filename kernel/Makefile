@@ -3,17 +3,10 @@ include ../Makefile.mk
 .DEFAULT_GOAL := kernel
 .PHONY: kernel
 
-CFLAGS        += -O2
-
 BIN_KEN       := ../$(KERNEL)
 
-SRC_BOTPAKS   := _bootpack.S
-OBJ_BOTPAKS   := ../$(OS_BIN_DIR)/_bootpack.o
-BIN_BOTPAKS   := ../$(OS_BIN_DIR)/_bootpack.bin
-
-SRC_BOTPAKC   := bootpack.c
-OBJ_BOTPAKC   := ../$(OS_BIN_DIR)/bootpack.o
-BIN_BOTPAKC   := ../$(OS_BIN_DIR)/bootpack.bin
+SRCS          := $(wildcard *.c)
+OBJS          := $(addprefix ../$(OS_BIN_DIR)/, $(patsubst %.c, %.o, $(SRCS)))
 
 HRB_BOTPAK    := ../$(OS_BIN_DIR)/bootpack.hrb
 
@@ -24,16 +17,16 @@ LIBRARY       := ../$(LIB_DIR)/libosutils.a
 
 
 kernel: $(HRB_BOTPAK) $(KERNEL_LOADER)
-	cat ../$(OS_BIN_DIR)/asmhead.bin $(HRB_BOTPAK) > $(BIN_KEN)
+	cat $(KERNEL_LOADER) $(HRB_BOTPAK) > $(BIN_KEN)
 
-$(HRB_BOTPAK): $(OBJ_BOTPAKS) $(OBJ_BOTPAKC) $(FONT_DATA) $(LIBRARY)
+$(HRB_BOTPAK): $(OBJS) $(FONT_DATA) $(LIBRARY)
 	$(LD) $(LDFLAGS) -T./kernel.x -o $@ $^
 
-$(OBJ_BOTPAKS):
-	$(AS) $(ASFLAGS) -o $@ $(SRC_BOTPAKS)
+../$(OS_BIN_DIR)/%.o: %.c
+	$(CC) $(CFLAGS) -c -O2 -o $@ $^
 
-$(OBJ_BOTPAKC):
-	$(CC) $(CFLAGS) -c -o $@ $(SRC_BOTPAKC)
+../$(OS_BIN_DIR)/dsctbl.o: dsctbl.c
+	$(CC) $(CFLAGS) -c -O0 -o $@ $^
 
 $(KERNEL_LOADER):
 	$(MAKE) asmhead -C ../boot/
