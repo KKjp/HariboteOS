@@ -89,7 +89,7 @@ pipelineflush:
 # the end of the main process of asmhead.S
 # start-up of bootpack.c
 #   In HariboteOS, any applications be formated as the ".hrb" type,
-#   so the cord below was written according to the ".hrb" rule.
+#   so the code below was written according to the ".hrb" rule.
     movl    $BOTPAK, %ebx
     movl    16(%ebx), %ecx
     addl    $3, %ecx
