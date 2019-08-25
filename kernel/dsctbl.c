@@ -13,13 +13,15 @@ void init_gdtidt(void)
     /* initialize the gdt */
     memset(gdt, 0, sizeof(segment_descriptor) * 8192);
     /* a data segment: expand upward, reading and writing is enable, ring0, present on the memory, used for 16bit, the limit will be dealt with multiplied by 4KB value */
-    set_segmdesc(gdt + 1, 0xffffffff, 0x00000000, 0b0010, 0, 0b00, 1, 0, 0, 1);
+    set_segmdesc(gdt + 1, 0xffffffff, 0x00000000, DATA_SEGMENT | EXPAND_UPWARD | READABLE_AND_WRITEABLE | NOT_ACCESSED /* 0b0010 */,
+            DATA_OR_CODE_SEGMENT /* 1 */, 0, SEGMENT_PRESENTS_ON_MEMORY /* 1 */, 0, SEGMENT_FOR_16BIT /* 0 */, THE_LIMIT_IS_INTERPRETED_AS_MULTIPLIED_BY_4KB_IS /* 1 */);
     /* a code segment: nonconformig - does not be run from low privilege level, reading and executing is enable, ring0, present on the memory, used for 16bit, the limit will be dealt with multiplied by 4KB value */
-    set_segmdesc(gdt + 2, 0x0007ffff, 0x00280000, 0b1010, 1, 0b00, 1, 0, 0, 1);
-    _lgdt((uint16_t) (8192 * 8), 0x00270000);
+    set_segmdesc(gdt + 2, 0x0007ffff, 0x00280000, CODE_SEGMENT | NON_CONFORMING | EXECUTABLE_AND_READABLE | NOT_ACCESSED /* 0b1010 */,
+            DATA_OR_CODE_SEGMENT /* 1 */, 0, SEGMENT_PRESENTS_ON_MEMORY /* 1 */, 0, SEGMENT_FOR_16BIT /* 0 */, THE_LIMIT_IS_INTERPRETED_AS_MULTIPLIED_BY_4KB_IS /* 1 */);
+    _lgdt((uint16_t) (8192 * sizeof(segment_descriptor)), 0x00270000);
 
     memset(idt, 0, sizeof(gate_descriptor) * 256);
-    _lidt((uint16_t) (256 * 8 - 1), 0x0026f800);
+    _lidt((uint16_t) (256 * sizeof(gate_descriptor) - 1), 0x0026f800);
 }
 
 void set_segmdesc(segment_descriptor *sd, uint32_t limit, const uint32_t base, const uint8_t type, const uint8_t S, const uint8_t DPL, const uint8_t P, const uint8_t AVL, const uint8_t D_B, uint8_t G)
