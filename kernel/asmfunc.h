@@ -15,6 +15,11 @@ static inline void _io_cli(void)
     asm volatile ("cli;");
 }
 
+static inline void _io_sti(void)
+{
+    asm volatile ("sti;");
+}
+
 static inline void _io_out8(const uint16_t port, const uint8_t data)
 {
     asm volatile ("out %%al, %%dx" : : "a"(data), "d"(port));
@@ -43,6 +48,10 @@ static inline void _lidt(const uint16_t size, const uint32_t addr)
     const uint64_t idt = (uint64_t) 0 | ((uint64_t) addr) << 16 | (uint64_t) size;
     asm volatile ("lidt %0;" : : "m"(idt));
 }
+
+extern void _asm_inthandler21(void);
+extern void _asm_inthandler27(void);
+extern void _asm_inthandler2c(void);
 
 #endif /* ASMFUNC_H_INCLUDED */
 
