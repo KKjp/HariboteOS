@@ -3,8 +3,6 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "bootpack.h"
-#include "graphic.h"
-#include "asmfunc.h"
 
 void init_palette(void)
 {
