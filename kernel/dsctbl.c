@@ -2,8 +2,7 @@
 
 #include <stdint.h>
 #include "../include/osutils.h"
-#include "asmfunc.h"
-#include "dsctbl.h"
+#include "bootpack.h"
 
 void init_gdtidt(void)
 {
@@ -21,6 +20,8 @@ void init_gdtidt(void)
     _lgdt((uint16_t) (8192 * sizeof(segment_descriptor)), 0x00270000);
 
     memset(idt, 0, sizeof(gate_descriptor) * 256);
+    set_gatedesc(idt + 0x21, (uint32_t) _asm_inthandler21, 2 << 3, INTERRUPT_GATE, GATE_FOR_32BIT, 0, GATE_PRESENTS_ON_MEMORY);
+    set_gatedesc(idt + 0x2c, (uint32_t) _asm_inthandler2c, 2 << 3, INTERRUPT_GATE, GATE_FOR_32BIT, 0, GATE_PRESENTS_ON_MEMORY);
     _lidt((uint16_t) (256 * sizeof(gate_descriptor) - 1), 0x0026f800);
 }
 
@@ -49,7 +50,7 @@ void set_gatedesc(gate_descriptor *gd, const uint32_t offset, const uint16_t sel
     gd->offset_low  =  offset & 0x0000ffff;
     gd->selector    =  selector;
     gd->unused      =  0b000;
-    gd->type        =  type   & 0b00001111;
+    gd->type        =  type   & 0b00000111;
     gd->D           =  D      & 0b00000001;
     gd->const_0     =  0;
     gd->DPL         =  DPL    & 0b00000011;
